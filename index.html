@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>project</title>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#F5F3FF] font-sans">
+    
+
+<nav class="bg-[#D8B4FE] border-gray-200 dark:bg-[#D8B4FE]">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
+          <!--<img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />-->
+          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-[#1E1B4B]">Hackable Smart-Watch</span>
+      </a>
+      <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          </svg>
+      </button>
+
+      <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        <button type="button" class="text-white bg-[#D8B4FE] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-[#6B21A8] dark:hover:bg-[#A855F7] dark:focus:ring-[#9333EA] type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">Get started</button>
+    </div>
+
+      <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+        <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <!--
+            <li>
+            <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>
+            </li>
+            -->
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+  
+    <!-- drawer component -->
+    <div id="drawer-navigation" class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-[#D8B4FE] dark:bg-[#D8B4FE]" tabindex="-1" aria-labelledby="drawer-navigation-label">
+        <h5 id="drawer-navigation-label" class="text-base font-semibold text-[#1E1B4B] uppercase dark:text-[#1E1B4B]">Menu</h5>
+        <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation" class="text-[#1E1B4B] bg-transparent hover:bg-[#A855F7] hover:bg-[#A855F7] rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center dark:hover:bg-[#A855F7] dark:hover:text-white" >
+            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        </button>
+    <div class="py-4 overflow-y-auto">
+        <ul class="space-y-2 font-medium">
+            <li>
+              <a href="#" data-section="dashboard" class="flex items-center p-2 text-[#1E1B4B] rounded-lg dark:text-[#1E1B4B] hover:bg-[#A855F7] dark:hover:bg-[#A855F7] group">
+                <svg class="w-5 h-5 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
+                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
+                </svg>
+                <span class="ms-3">Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" data-section="contacts" class="flex items-center p-2 text-[#1E1B4B] rounded-lg dark:text-[#1E1B4B] hover:bg-[#A855F7] dark:hover:bg-[#A855F7] group">
+                <svg class="shrink-0 w-5 h-5 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                  <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
+                </svg>
+                <span class="flex-1 ms-3 whitespace-nowrap">Contacts</span>
+              </a>
+            </li>
+            <!-- Add similar data-section attributes to other nav items -->
+          </ul>
+        </div>
+    </div>
+
+
+        <!-- Main content area -->
+    <div id="dashboard" class="section hidden p-5">
+        
+        <h1 class="text-2xl font-bold text-gray-800">💡 Real-Time Health Dashboard</h1>
+        <div class="my-4 space-x-2">
+          <button onclick="connect()" class="bg-[#6B21A8] hover:bg-[#A855F7] text-white px-5 py-2 rounded-lg">🔗 Connect to Bangle.js</button>
+        </div>
+    
+        <div id="status" class="text-gray-600 mb-4">⏳ Waiting...</div>
+    
+        <div id="emergencyBanner" class="hidden bg-red-600 text-white font-bold p-3 rounded-lg mb-5">
+          🚨 Emergency Detected: Abnormal health reading!
+        </div>
+    
+        <div id="emergencyModal" class="hidden bg-white border-2 border-red-500 p-5 rounded-xl max-w-md mx-auto">
+          <h3 class="text-xl font-bold text-red-600">🚨 Emergency Alert!</h3>
+          <p class="my-3">Abnormal health reading detected. Please take action immediately.</p>
+          <div class="space-x-2">
+            <button onclick="callCaregiver()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">📞 Call Caregiver</button>
+            <button onclick="dismissAlert()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">✖️ Dismiss</button>
+          </div>
+        </div>
+     
+    
+        
+    
+        <div id="data" class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
+          <div class="card bg-white p-4 rounded-xl shadow">
+            <div class="label font-bold text-gray-600">Heart</div>
+            <div class="value text-2xl font-bold text-gray-900" id="hr">--</div>
+          </div>
+          <div class="card bg-white p-4 rounded-xl shadow">
+            <div class="label font-bold text-gray-600">Temperature</div>
+            <div class="value text-2xl font-bold text-gray-900" id="temp">--</div>
+          </div>
+          <div class="card bg-white p-4 rounded-xl shadow">
+            <div class="label font-bold text-gray-600">Pressure</div>
+            <div class="value text-2xl font-bold text-gray-900" id="pressure">--</div>
+          </div>
+          <div class="card bg-white p-4 rounded-xl shadow">
+            <div class="label font-bold text-gray-600">Accel (XYZ)</div>
+            <div class="value text-2xl font-bold text-gray-900" id="accel">--</div>
+          </div>
+          <div class="card bg-white p-4 rounded-xl shadow">
+            <div class="label font-bold text-gray-600">Mag (XYZ)</div>
+            <div class="value text-2xl font-bold text-gray-900" id="mag">--</div>
+          </div>
+        </div>
+    
+        <audio id="alertSound" src="alert.wav" preload="auto"></audio>
+     
+    
+
+    </div>
+
+
+    <section id="contacts" class="section hidden p-5">
+        <div class="bg-white border-2 border-gray-300 p-5 rounded-xl max-w-md mx-auto">
+            <h3 class="text-xl font-bold mb-3">⚙️ Emergency Contact Settings</h3>
+            
+            <!-- Tab Navigation -->
+            <div class="flex border-b mb-4">
+                <button id="personalTabBtn" class="px-4 py-2 font-medium border-b-2 border-[#6B21A8] text-[#6B21A8]">Personal Caregivers</button>
+                <button id="medicalTabBtn" class="px-4 py-2 font-medium text-gray-500">Medical Professionals</button>
+            </div>
+            
+            <!-- Personal Caregivers Tab -->
+            <div id="personalTab" class="tab-content">
+                <form id="caregiverForm" class="space-y-3">
+                    <input
+                        type="text"
+                        placeholder="Caregiver Name"
+                        id="caregiverName"
+                        class="w-full p-2 border border-gray-300 rounded"
+                        required
+                    />
+                    <input
+                        type="tel"
+                        placeholder="Phone Number"
+                        id="caregiverPhone"
+                        class="w-full p-2 border border-gray-300 rounded"
+                        required
+                    />
+                    <button type="submit" class="bg-[#6B21A8] hover:bg-[#A855F7] text-white px-4 py-2 rounded-lg w-full">Add Caregiver</button>
+                </form>
+                <ul id="caregiverList" class="my-4"></ul>
+            </div>
+            
+            <!-- Medical Professionals Tab -->
+            <div id="medicalTab" class="tab-content hidden">
+                <form id="medicalForm" class="space-y-3">
+                    <input
+                        type="text"
+                        placeholder="Medical Professional Name"
+                        id="medicalName"
+                        class="w-full p-2 border border-gray-300 rounded"
+                        required
+                    />
+                    <input
+                        type="tel"
+                        placeholder="Phone Number"
+                        id="medicalPhone"
+                        class="w-full p-2 border border-gray-300 rounded"
+                        required
+                    />
+                    <button type="submit" class="bg-[#6B21A8] hover:bg-[#A855F7] text-white px-4 py-2 rounded-lg w-full">Add Medical Professional</button>
+                </form>
+                <ul id="medicalList" class="my-4"></ul>
+            </div>
+            
+            <!--<button onclick="closeSettings()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg w-full">Close</button>-->
+        </div>
+        
+        <!-- Modal Overlay -->
+        <div id="modalOverlay" class="hidden fixed inset-0 bg-black bg-opacity-40 z-[999] flex items-center justify-center"></div>
+        
+        <!-- Confirmation Modal - Properly Centered -->
+        <div id="confirmModal" class="hidden bg-white border-2 border-gray-300 p-5 rounded-xl max-w-md w-full fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] shadow-xl animate-fadeIn text-center">
+            <p id="confirmMessage"></p>
+            <div class="mt-4">
+                <button id="confirmYes" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg mr-2">✅ Yes</button>
+                <button id="confirmNo" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">❌ No</button>
+            </div>
+        </div>
+    </section>
+
+
+<!-- Add more sections as needed -->
+
+
+
+    
+
+   
+    
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script src="/scripts/emergency.js"></script>
+    <script src="/scripts/notification.js"></script>
+    <script src="/scripts/dashboard.js"></script>
+    <script src="/scripts/twilio.js"></script>
+    
+</body>
+</html>
