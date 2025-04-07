@@ -57,7 +57,7 @@ function createEmergencyElements() {
 // Function to send SMS using Sendchamp API
 function sendSMS(phoneNumbers, message, callback) {
     // Replace with your actual Sendchamp API key
-    const apiKey = 'sendchamp_live_$2a$10$QT4.rymb2HMHOm.Zvp40EexR1IqLUpG.RAMeDxi.Gg1hGDlkPqJZi';
+    const apiKey = 'sendchamp_live_$2a$10$DoRUHJ.jZHGHYt502WlCcuQ91VzB8ClBeUZQ9TujekbQnLdb6GNS.';
     
     // Format phone numbers for Sendchamp API (ensure they have country code)
     const formattedNumbers = phoneNumbers.map(number => {
@@ -69,11 +69,12 @@ function sendSMS(phoneNumbers, message, callback) {
     });
     
     // Prepare the API request
-    fetch('https://api.sendchamp.com/api/v1', {
+    fetch('https://api.sendchamp.com/api/v1/sms/send', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify({
             to: formattedNumbers,
