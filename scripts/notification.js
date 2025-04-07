@@ -141,9 +141,9 @@ function hideConfirmModal() {
 }
 
 // Close settings function
-function closeSettings() {
-  document.getElementById('contacts').classList.add('hidden');
-}
+//function closeSettings() {
+//document.getElementById('contacts').classList.add('hidden');
+//}
 
 
 // Function to add a contact to a list
