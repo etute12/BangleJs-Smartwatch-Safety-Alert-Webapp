@@ -212,6 +212,7 @@ function createEmergencyAlertModal() {
                     </div>
                 </div>
                 <div class="flex justify-end gap-2">
+                    <button id="voiceCallButton" class="px-4 py-2 bg-red-600 text-white rounded">Call</button>
                     <button id="cancelAlert" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
                     <button id="sendAlert" class="px-4 py-2 bg-red-600 text-white rounded">Send Alert</button>
                 </div>
@@ -270,3 +271,95 @@ function addEmergencyAlertButton() {
 // Make functions available globally
 window.sendEmergencyAlert = sendEmergencyAlert;
 window.getUserLocation = getUserLocation;
+
+// New function to handle voice call button click
+function handleVoiceCall() {
+    const types = [];
+    if (document.getElementById('alertCaregivers').checked) types.push('caregiver');
+    if (document.getElementById('alertMedical').checked) types.push('medical');
+
+    if (types.length === 0) {
+        showAlert('Please select at least one contact type', 'error');
+        return;
+    }
+
+    sendEmergencyVoiceAlert(types);
+    hideEmergencyAlertModal();
+}
+
+// Modified voice alert function to accept contact types
+function sendEmergencyVoiceAlert(contactTypes = ['caregiver', 'medical']) {
+    const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+    const filteredContacts = contacts.filter(contact => 
+        contactTypes.includes(contact.type)
+    );
+    
+    if (filteredContacts.length === 0) {
+        showAlert('No emergency contacts found', 'error');
+        return;
+    }
+    
+    const phoneNumbers = filteredContacts.map(contact => contact.phone);
+    
+    // Get location to include in call (optional)
+    getUserLocation().then(locationURL => {
+        let enhancedMessage = "EMERGENCY ALERT: Medical assistance needed. Please check your messages for details.";
+        if (locationURL !== "Location unavailable" && locationURL !== "Location services not available") {
+            enhancedMessage += ` Location: ${locationURL}`;
+        }
+
+        // Initiate voice call with formatted numbers
+        sendVoiceCall(phoneNumbers, function(success, response) {
+            if (success) {
+                showAlert('Emergency voice calls initiated', 'success');
+            } else {
+                showAlert('Failed to initiate voice calls', 'error');
+            }
+        });
+    });
+}
+
+// Modified sendVoiceCall to use proper error handling
+function sendVoiceCall(phoneNumbers, callback) {
+    const apiKey = 'atsk_419a4b38a39d709b445b2d8f8559b312e7b1ffe74cd93fc543877072ca6188097fac320e';
+    const username = 'testella';
+    const from = 'YOUR_VOICE_ENABLED_NUMBER';
+    const voiceXmlUrl = 'URL_TO_YOUR_VOICEXML_FILE';
+
+    const formattedNumbers = phoneNumbers.map(number => {
+        if (!number.startsWith('+')) {
+            return number.startsWith('0') ? '+234' + number.substring(1) : '+234' + number;
+        }
+        return number;
+    }).join(',');
+
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('from', from);
+    formData.append('to', formattedNumbers);
+    formData.append('request', voiceXmlUrl);
+
+    fetch('https://api.africastalking.com/version1/voice/call', {
+        method: 'POST',
+        headers: {
+            'apiKey': apiKey,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'Success') {
+            callback(true, data);
+        } else {
+            throw new Error(data.errorMessage || 'Unknown error from API');
+        }
+    })
+    .catch(error => {
+        console.error('Voice call error:', error);
+        callback(false, error.message);
+    });
+}
