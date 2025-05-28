@@ -73,3 +73,100 @@
 .dark #logsBody td {
     color: #e5e7eb;
 }
+
+.wave-container {
+    position: relative;
+    overflow: hidden;
+    height: 64px;
+    border-radius: 8px;
+}
+
+.wave {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    animation: wave-move 3s ease-in-out infinite;
+}
+
+.wave-red {
+    background: linear-gradient(135deg, 
+        rgba(239, 68, 68, 0.4) 0%, 
+        rgba(239, 68, 68, 0.2) 25%, 
+        rgba(239, 68, 68, 0.6) 50%, 
+        rgba(239, 68, 68, 0.1) 75%, 
+        rgba(239, 68, 68, 0.5) 100%);
+    clip-path: polygon(0% 60%, 15% 45%, 35% 55%, 50% 40%, 70% 50%, 85% 35%, 100% 45%, 100% 100%, 0% 100%);
+}
+
+.wave-blue {
+    background: linear-gradient(135deg, 
+        rgba(59, 130, 246, 0.4) 0%, 
+        rgba(59, 130, 246, 0.2) 25%, 
+        rgba(59, 130, 246, 0.6) 50%, 
+        rgba(59, 130, 246, 0.1) 75%, 
+        rgba(59, 130, 246, 0.5) 100%);
+    clip-path: polygon(0% 65%, 20% 50%, 40% 60%, 55% 45%, 75% 55%, 90% 40%, 100% 50%, 100% 100%, 0% 100%);
+}
+
+.wave-orange {
+    background: linear-gradient(135deg, 
+        rgba(251, 146, 60, 0.4) 0%, 
+        rgba(251, 146, 60, 0.2) 25%, 
+        rgba(251, 146, 60, 0.6) 50%, 
+        rgba(251, 146, 60, 0.1) 75%, 
+        rgba(251, 146, 60, 0.5) 100%);
+    clip-path: polygon(0% 70%, 25% 55%, 45% 65%, 60% 50%, 80% 60%, 95% 45%, 100% 55%, 100% 100%, 0% 100%);
+}
+
+.wave-yellow {
+    background: linear-gradient(135deg, 
+        rgba(234, 179, 8, 0.4) 0%, 
+        rgba(234, 179, 8, 0.2) 25%, 
+        rgba(234, 179, 8, 0.6) 50%, 
+        rgba(234, 179, 8, 0.1) 75%, 
+        rgba(234, 179, 8, 0.5) 100%);
+    clip-path: polygon(0% 55%, 18% 40%, 38% 50%, 52% 35%, 72% 45%, 88% 30%, 100% 40%, 100% 100%, 0% 100%);
+}
+
+.wave-green {
+    background: linear-gradient(135deg, 
+        rgba(34, 197, 94, 0.4) 0%, 
+        rgba(34, 197, 94, 0.2) 25%, 
+        rgba(34, 197, 94, 0.6) 50%, 
+        rgba(34, 197, 94, 0.1) 75%, 
+        rgba(34, 197, 94, 0.5) 100%);
+    clip-path: polygon(0% 50%, 22% 35%, 42% 45%, 58% 30%, 78% 40%, 92% 25%, 100% 35%, 100% 100%, 0% 100%);
+}
+
+.wave-purple {
+    background: linear-gradient(135deg, 
+        rgba(168, 85, 247, 0.4) 0%, 
+        rgba(168, 85, 247, 0.2) 25%, 
+        rgba(168, 85, 247, 0.6) 50%, 
+        rgba(168, 85, 247, 0.1) 75%, 
+        rgba(168, 85, 247, 0.5) 100%);
+    clip-path: polygon(0% 65%, 17% 50%, 37% 60%, 53% 45%, 73% 55%, 87% 40%, 100% 50%, 100% 100%, 0% 100%);
+}
+
+@keyframes wave-move {
+    0% { transform: translateX(-50%) scaleY(1); }
+    33% { transform: translateX(-50%) scaleY(1.1); }
+    66% { transform: translateX(-50%) scaleY(0.9); }
+    100% { transform: translateX(-50%) scaleY(1); }
+}
+
+.card-bg {
+    background: rgba(17, 24, 39, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}

@@ -118,7 +118,7 @@ function sendEmergencyAlert(message, contactTypes = ['caregiver', 'medical'], me
         enhancedMessage += '\n\nHealth Metrics:';
         if (metricsData.heartRate) enhancedMessage += `\n- Heart Rate: ${metricsData.heartRate} bpm`;
         if (metricsData.temp) enhancedMessage += `\n- Temperature: ${metricsData.temp.toFixed(1)}°C`;
-        if (metricsData.pressure?.pressure) enhancedMessage += `\n- Pressure: ${metricsData.pressure.pressure} Pa`;
+        if (metricsData.pressure) enhancedMessage += `\n- Pressure: ${metricsData.pressure} Pa`;
         
         // Update metrics display in modal
         const metricsDisplay = document.getElementById('emergencyMetricsDisplay');
@@ -126,7 +126,7 @@ function sendEmergencyAlert(message, contactTypes = ['caregiver', 'medical'], me
             let metricsHTML = '<strong>Critical Readings:</strong><ul>';
             if (metricsData.heartRate) metricsHTML += `<li>Heart Rate: <span class="text-red-600">${metricsData.heartRate} bpm</span></li>`;
             if (metricsData.temp) metricsHTML += `<li>Temperature: <span class="text-red-600">${metricsData.temp.toFixed(1)}°C</span></li>`;
-            if (metricsData.pressure?.pressure) metricsHTML += `<li>Pressure: ${metricsData.pressure.pressure} Pa</li>`;
+            if (metricsData.pressure) metricsHTML += `<li>Pressure: ${metricsData.pressure} Pa</li>`;
             metricsHTML += '</ul>';
             metricsDisplay.innerHTML = metricsHTML;
         }

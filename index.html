@@ -6,6 +6,7 @@
     <title>Hackable Smart-Watch</title>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
 
 
 </head>
@@ -38,16 +39,7 @@
                 </span>
             </a>
     
-            <!-- Right-aligned mobile menu -->
-            <div class="flex items-center space-x-3 order-3 md:hidden">
-                <!-- Mobile menu button -->
-                <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg hover:bg-white/20 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:focus:ring-gray-600 text-[#1E1B4B] dark:text-gray-300 theme-transition" aria-controls="navbar-default" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                    </svg>
-                </button>
-            </div>
+
     
             <!-- Desktop menu -->
             <div class="hidden w-full md:block md:w-auto order-4" id="navbar-default">
@@ -116,7 +108,23 @@
         </div>
     </div>
 
-    <div id="data" class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
+    <div class="bg-[#D8B4FE] p-6 rounded-lg shadow-xl mb-8 border border-zinc-700">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div class="mb-4 sm:mb-0">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-3 text-base">
+                    <span class="text-gray-900 font-semibold">Name: <span class="text-black font-bold">Emmanuella</span></span>
+                    <span class="text-gray-900 font-semibold">Gender: <span class="text-black font-bold">female</span></span>
+                    <span class="text-gray-900 font-semibold">Age: <span class="text-black font-bold">21</span></span>
+                    <span class="text-gray-900 font-semibold">Contact: <span class="text-black font-bold">07045334331</span></span>
+                </div>
+            </div>
+            <div class="text-right text-sm sm:text-base text-gray-900">
+                <div class="font-bold text-gray-900 mb-1">Wednesday, 28th of May, 2025</div>
+                <div class="text-gray-900">Agege, Ogun State, Nigeria</div>
+            </div>
+        </div>
+    </div>
+    <!-- <div id="data" class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
         <div class="card bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg dark:shadow-gray-900/30 theme-transition border border-gray-100 dark:border-gray-700">
             <div class="label font-bold text-gray-600 dark:text-gray-300 theme-transition">❤️ Heart Rate</div>
             <div class="value text-2xl font-bold text-gray-900 dark:text-white theme-transition" id="hr">--</div>
@@ -136,6 +144,104 @@
         <div class="card bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg dark:shadow-gray-900/30 theme-transition border border-gray-100 dark:border-gray-700">
             <div class="label font-bold text-gray-600 dark:text-gray-300 theme-transition">🧭 Mag (XYZ)</div>
             <div class="value text-2xl font-bold text-gray-900 dark:text-white theme-transition" id="mag">--</div>
+        </div>
+    </div> -->
+
+    <div id="data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Heart Rate -->
+        <div class="card-bg bg-white dark:bg-gray-800 p-6 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="icon-circle bg-red-500">
+                    ❤️
+                </div>
+                <div class="text-gray-900 dark:text-gray-300 font-medium">Heart Rate</div>
+            </div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2" id="hr">--</div>
+            <div class="text-sm text-gray-900 dark:text-white mb-4">bpm</div>
+            <div class="text-xs text-green-400 mb-4">Normal</div>
+            <div class="wave-container">
+                <div class="wave wave-red"></div>
+            </div>
+        </div>
+
+        <!-- Blood Pressure -->
+        <div class="card-bg bg-white dark:bg-gray-800 p-6 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="icon-circle bg-blue-500">
+                    💧
+                </div>
+                <div class="text-gray-900 dark:text-gray-300 font-medium">Blood Pressure</div>
+            </div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2" id="pressure">--</div>
+            <div class="text-sm text-gray-900 dark:text-white mb-4">/72 mmHg</div>
+            <div class="text-xs text-green-400 mb-4">Normal</div>
+            <div class="wave-container">
+                <div class="wave wave-blue"></div>
+            </div>
+        </div>
+
+        <!-- Body Temperature -->
+        <div class="card-bg bg-white dark:bg-gray-800 p-6 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="icon-circle bg-red-400">
+                    🌡️
+                </div>
+                <div class="text-gray-900 dark:text-gray-300 font-medium">Body Temperature</div>
+            </div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2" id="temp">--</div>
+            <div class="text-sm text-gray-900 dark:text-white mb-4">°F</div>
+            <div class="text-xs text-green-400 mb-4">Normal</div>
+            <div class="wave-container">
+                <div class="wave wave-orange"></div>
+            </div>
+        </div>
+
+        <!-- Steps -->
+        <!-- <div class="card-bg p-6 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="icon-circle bg-yellow-500">
+                    👟
+                </div>
+                <div class="text-white font-medium">Steps</div>
+            </div>
+            <div class="text-4xl font-bold text-white mb-2" id="steps">--</div>
+            <div class="text-sm text-gray-400 mb-4">steps</div>
+            <div class="text-xs text-green-400 mb-4">Normal</div>
+            <div class="wave-container">
+                <div class="wave wave-yellow"></div>
+            </div>
+        </div> -->
+
+        <!-- Accel (XYZ) -->
+        <div class="card-bg bg-white dark:bg-gray-800 p-6 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="icon-circle bg-green-600">
+                    🏃
+                </div>
+                <div class="text-gray-900 dark:text-gray-300 font-medium">Accel (XYZ)</div>
+            </div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2" id="accel">--</div>
+            <div class="text-sm text-gray-900 dark:text-white mb-4">m/s²</div>
+            <div class="text-xs text-gray-800 mb-4">Monitoring</div>
+            <div class="wave-container">
+                <div class="wave wave-yellow"></div>
+            </div>
+        </div>
+
+        <!-- Mag (XYZ) -->
+        <div class="card-bg bg-white dark:bg-gray-800 p-6 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="icon-circle bg-purple-500">
+                    🧭
+                </div>
+                <div class="text-gray-900 dark:text-gray-300 font-medium">Mag (XYZ)</div>
+            </div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2" id="mag">--</div>
+            <div class="text-sm text-gray-900 dark:text-white mb-4">μT</div>
+            <div class="text-xs text-gray-800 mb-4">Monitoring</div>
+            <div class="wave-container">
+                <div class="wave wave-yellow"></div>
+            </div>
         </div>
     </div>
 

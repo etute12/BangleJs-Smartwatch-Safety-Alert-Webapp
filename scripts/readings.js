@@ -97,17 +97,34 @@ const updateUI = (data) => {
         }
     }
 
-    // Pressure Log
-    const pressureElem = document.getElementById("pressure");
-    if (data.pressure?.pressure) {
-        const pressureValue = data.pressure.pressure;
-        pressureElem.textContent = `${pressureValue} Pa`;
-        logData('Pressure', `${pressureValue} Pa`);
-    } else {
-        pressureElem.textContent = "--";
-    }
+    // --- START OF BLOOD PRESSURE CHANGES ---
+    // --- START OF ATMOSPHERIC PRESSURE DISPLAY ---
+    const pressureElem = document.getElementById("pressure"); // Assuming 'pressure' is the ID of your HTML element
+    if (typeof data.pressure === "number") { // Check for the 'pressure' field from Bangle.js
+        const atmosphericPressureValue = data.pressure.toFixed(1); // Round to 1 decimal place
+        pressureElem.textContent = `${atmosphericPressureValue} hPa`; // Display in hectopascals (hPa)
+        logData('Atmospheric Pressure', `${atmosphericPressureValue} hPa`); 
+        
+        // Log to table
 
-    // Accelerometer Log
+        // You might want to add emergency logic for blood pressure too if needed
+        // For example:
+        // if (systolic > 140 || diastolic > 90) { // Example high BP
+        //     bpElem.parentElement.style.backgroundColor = "#ffcccc";
+        //     bpElem.parentElement.style.border = "2px solid red";
+        //     emergencyTriggered = true;
+        // } else {
+        //     bpElem.parentElement.style.backgroundColor = "";
+        //     bpElem.parentElement.style.border = "";
+        // }
+    } else {
+        pressureElem.textContent = "No Pressure Data"; // Message if atmospheric pressure is not available
+        console.log('Atmospheric Pressure data: Not available or invalid.'); 
+    }
+    // --- END OF BLOOD PRESSURE CHANGES ---
+
+
+    // Accelerometer Log (no changes needed here as it uses data.accel)
     const accel = data.accel ?? {};
     if (accel.x !== undefined) {
         const accelValue = `x: ${accel.x?.toFixed(2)}, y: ${accel.y?.toFixed(2)}, z: ${accel.z?.toFixed(2)}`;
@@ -115,7 +132,7 @@ const updateUI = (data) => {
         logData('Accelerometer', accelValue);
     }
 
-    // Magnetometer Log
+    // Magnetometer Log (no changes needed here as it uses data.mag)
     const mag = data.mag ?? {};
     if (mag.x !== undefined) {
         const magValue = `x: ${mag.x}, y: ${mag.y}, z: ${mag.z}`;
