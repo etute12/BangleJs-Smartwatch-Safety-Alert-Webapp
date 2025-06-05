@@ -79,7 +79,7 @@ function sendSMS(phoneNumbers, message, callback) {
         body: JSON.stringify({
             to: formattedNumbers,
             message: message,
-            sender_name: 'SAlert', // Change to your registered sender ID
+            sender_name: 'Schamp', // Change to your registered sender ID
             route: 'dnd' // Use DND route for emergency messages
         })
     })

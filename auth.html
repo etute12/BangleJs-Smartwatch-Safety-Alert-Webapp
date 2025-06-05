@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Portal - Sign In</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <!-- Clerk Script -->
+    <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bmF0aXZlLWFuY2hvdnktMjQuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://native-anchovy-24.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript">
+  </script>
+</head>
+<body>
+    <!-- Loading State -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Authentication Container -->
+    <div id="auth-container" class="auth-container" style="display: none;">
+        <div class="auth-form">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Patient Portal</h1>
+                <p class="text-gray-600">Access your medical dashboard</p>
+            </div>
+
+            <div id="sign-in-form">
+                <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Sign In</h2>
+                <form id="signInForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="signInEmail" class="form-input" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="signInPassword" class="form-input" required>
+                    </div>
+                    <button type="submit" id="signInBtn" class="btn-primary">Sign In</button>
+                    <div id="signInError" class="error-message" style="display: none;"></div>
+                </form>
+                <p class="text-center mt-4 text-sm text-gray-600">
+                    Don't have an account? 
+                    <button id="showSignUp" class="text-blue-600 hover:underline">Sign Up</button>
+                </p>
+            </div>
+
+            <div id="sign-up-form" style="display: none;">
+                <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Create Account</h2>
+                <form id="signUpForm">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                            <input type="text" id="signUpFirstName" class="form-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input type="text" id="signUpLastName" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="signUpEmail" class="form-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                        <input type="tel" id="signUpPhone" class="form-input" required placeholder="+1234567890">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+                            <input type="number" id="signUpAge" class="form-input" required min="1" max="120">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                            <select id="signUpGender" class="form-input" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="signUpPassword" class="form-input" required>
+                    </div>
+                    <button type="submit" id="signUpBtn" class="btn-primary">Create Account</button>
+                    <div id="signUpError" class="error-message" style="display: none;"></div>
+                    <div id="signUpSuccess" class="success-message" style="display: none;"></div>
+                </form>
+                <p class="text-center mt-4 text-sm text-gray-600">
+                    Already have an account? 
+                    <button id="showSignIn" class="text-blue-600 hover:underline">Sign In</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clerk;
+        
+        // Initialize Clerk
+        window.addEventListener('load', async () => {
+            try {
+                clerk = window.Clerk;
+                await clerk.load();
+                
+                // Check if user is already signed in
+                if (clerk.user) {
+                    // Redirect to dashboard if already authenticated
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showAuth();
+                }
+            } catch (error) {
+                console.error('Error initializing Clerk:', error);
+                showAuth();
+            }
+        });
+
+        // Show authentication forms
+        function showAuth() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'flex';
+        }
+
+        // Toggle between sign in and sign up forms
+        document.getElementById('showSignUp').addEventListener('click', () => {
+            document.getElementById('sign-in-form').style.display = 'none';
+            document.getElementById('sign-up-form').style.display = 'block';
+        });
+
+        document.getElementById('showSignIn').addEventListener('click', () => {
+            document.getElementById('sign-up-form').style.display = 'none';
+            document.getElementById('sign-in-form').style.display = 'block';
+        });
+
+        // Sign In Form Handler
+        document.getElementById('signInForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+            const errorElement = document.getElementById('signInError');
+            const submitBtn = document.getElementById('signInBtn');
+            
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing In...';
+            errorElement.style.display = 'none';
+            
+            try {
+                await clerk.client.signIn.create({
+                    identifier: email,
+                    password: password,
+                });
+                
+                await clerk.client.signIn.prepareFirstFactor({
+                    strategy: 'password',
+                    password: password,
+                });
+                
+                const result = await clerk.client.signIn.attemptFirstFactor({
+                    strategy: 'password',
+                    password: password,
+                });
+                
+                if (result.status === 'complete') {
+                    await clerk.setActive({ session: result.createdSessionId });
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (error) {
+                errorElement.textContent = error.errors?.[0]?.message || 'Sign in failed. Please try again.';
+                errorElement.style.display = 'block';
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Sign Up Form Handler
+        document.getElementById('signUpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('signUpFirstName').value;
+            const lastName = document.getElementById('signUpLastName').value;
+            const email = document.getElementById('signUpEmail').value;
+            const phone = document.getElementById('signUpPhone').value;
+            const age = document.getElementById('signUpAge').value;
+            const gender = document.getElementById('signUpGender').value;
+            const password = document.getElementById('signUpPassword').value;
+            
+            const errorElement = document.getElementById('signUpError');
+            const successElement = document.getElementById('signUpSuccess');
+            const submitBtn = document.getElementById('signUpBtn');
+            
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Account...';
+            errorElement.style.display = 'none';
+            successElement.style.display = 'none';
+            
+            try {
+                const signUp = await clerk.client.signUp.create({
+                    firstName: firstName,
+                    lastName: lastName,
+                    emailAddress: email,
+                    phoneNumber: phone,
+                    password: password,
+                    unsafeMetadata: {
+                        age: age,
+                        gender: gender
+                    }
+                });
+                
+                // Handle verification if needed
+                if (signUp.status === 'complete') {
+                    await clerk.setActive({ session: signUp.createdSessionId });
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Show success message and switch to sign in
+                    successElement.textContent = 'Account created successfully! Please check your email for verification, then sign in.';
+                    successElement.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        document.getElementById('showSignIn').click();
+                        document.getElementById('signInEmail').value = email;
+                    }, 3000);
+                }
+                
+            } catch (error) {
+                errorElement.textContent = error.errors?.[0]?.message || 'Sign up failed. Please try again.';
+                errorElement.style.display = 'block';
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>
