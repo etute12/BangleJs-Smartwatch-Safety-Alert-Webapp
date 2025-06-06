@@ -112,10 +112,20 @@
                 clerk = window.Clerk;
                 await clerk.load();
                 
+                // Set up session listener after Clerk is loaded
+                clerk.addListener('session', (session) => {
+                    if (session && !isProcessing) {
+                        console.log('Session created, redirecting...');
+                        setTimeout(() => {
+                            window.location.replace('index.html');
+                        }, 100);
+                    }
+                });
+                
                 // Check if user is already signed in
                 if (clerk.user) {
                     // Redirect to dashboard if already authenticated
-                    window.location.replace('index.html'); // Use replace instead of href
+                    window.location.replace('index.html');
                     return;
                 }
                 
@@ -123,16 +133,6 @@
             } catch (error) {
                 console.error('Error initializing Clerk:', error);
                 showAuth();
-            }
-        });
-
-        // Listen for session changes
-        clerk?.addListener('session', (session) => {
-            if (session && !isProcessing) {
-                // Small delay to ensure session is fully established
-                setTimeout(() => {
-                    window.location.replace('index.html');
-                }, 500);
             }
         });
 
