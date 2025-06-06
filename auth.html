@@ -114,7 +114,7 @@
                 // Check if user is already signed in
                 if (clerk.user) {
                     // Redirect to dashboard if already authenticated
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'index.html';
                 } else {
                     showAuth();
                 }
@@ -174,7 +174,7 @@
                 if (result.status === 'complete') {
                     await clerk.setActive({ session: result.createdSessionId });
                     // Redirect to dashboard
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'index.html';
                 }
             } catch (error) {
                 errorElement.textContent = error.errors?.[0]?.message || 'Sign in failed. Please try again.';
@@ -224,7 +224,7 @@
                 // Handle verification if needed
                 if (signUp.status === 'complete') {
                     await clerk.setActive({ session: signUp.createdSessionId });
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'index.html';
                 } else {
                     // Show success message and switch to sign in
                     successElement.textContent = 'Account created successfully! Please check your email for verification, then sign in.';
