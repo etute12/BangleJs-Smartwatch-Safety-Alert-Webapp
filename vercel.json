@@ -6,21 +6,28 @@
       "use": "@vercel/node"
     },
     {
-      "src": "index.html",       
+      "src": "*.html",
       "use": "@vercel/static"
     },
     {
-      "src": "styles.css",        
+      "src": "*.css",
       "use": "@vercel/static"
     },
     {
-      "src": "scripts/*.js",     
+      "src": "scripts/*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.wav",
       "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "src": "/", "dest": "index.html" },              
-    { "src": "/api/.*", "dest": "server/index.js" },  
-    { "src": "/(.*)", "dest": "/$1" }                 
+    { "src": "/auth", "dest": "/auth.html" },
+    { "src": "/auth.html", "dest": "/auth.html" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/api/(.*)", "dest": "/server/index.js" },
+    { "src": "/(.*\\.(css|js|wav|html))", "dest": "/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
