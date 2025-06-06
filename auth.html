@@ -104,7 +104,6 @@
 
     <script>
         let clerk;
-        let isProcessing = false; // Prevent multiple simultaneous attempts
         
         // Initialize Clerk
         window.addEventListener('load', async () => {
@@ -112,24 +111,13 @@
                 clerk = window.Clerk;
                 await clerk.load();
                 
-                // Set up session listener after Clerk is loaded
-                clerk.addListener('session', (session) => {
-                    if (session && !isProcessing) {
-                        console.log('Session created, redirecting...');
-                        setTimeout(() => {
-                            window.location.replace('index.html');
-                        }, 100);
-                    }
-                });
-                
                 // Check if user is already signed in
                 if (clerk.user) {
                     // Redirect to dashboard if already authenticated
-                    window.location.replace('index.html');
-                    return;
+                    window.location.href = 'index.html';
+                } else {
+                    showAuth();
                 }
-                
-                showAuth();
             } catch (error) {
                 console.error('Error initializing Clerk:', error);
                 showAuth();
@@ -153,13 +141,9 @@
             document.getElementById('sign-in-form').style.display = 'block';
         });
 
-        // Simplified Sign In Form Handler
+        // Sign In Form Handler
         document.getElementById('signInForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Prevent multiple simultaneous attempts
-            if (isProcessing) return;
-            isProcessing = true;
             
             const email = document.getElementById('signInEmail').value;
             const password = document.getElementById('signInPassword').value;
@@ -172,40 +156,37 @@
             errorElement.style.display = 'none';
             
             try {
-                // Simplified sign-in using Clerk's high-level API
-                const signIn = await clerk.client.signIn.create({
+                const result = await clerk.client.signIn.create({
                     identifier: email,
                     password: password,
-                });
+                  });
+                  
+                  if (result.status === 'complete') {
+                    await clerk.setActive({ session: result.createdSessionId });
+                    window.location.href = 'index.html';
+                  } else {
+                    throw new Error('Sign in not completed. Additional steps required.');
+                  }
+                  
                 
-                // If sign-in is complete, set the session
-                if (signIn.status === 'complete') {
-                    await clerk.setActive({ session: signIn.createdSessionId });
-                    // The session listener will handle the redirect
-                } else {
-                    // Handle additional steps if needed (like 2FA)
-                    throw new Error('Additional verification required');
+                if (result.status === 'complete') {
+                    await clerk.setActive({ session: result.createdSessionId });
+                    // Redirect to dashboard
+                    window.location.href = 'index.html';
                 }
-                
             } catch (error) {
-                console.error('Sign-in error:', error);
                 errorElement.textContent = error.errors?.[0]?.message || 'Sign in failed. Please try again.';
                 errorElement.style.display = 'block';
-                
+            } finally {
                 // Re-enable button
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Sign In';
-                isProcessing = false;
             }
         });
 
         // Sign Up Form Handler
         document.getElementById('signUpForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Prevent multiple simultaneous attempts
-            if (isProcessing) return;
-            isProcessing = true;
             
             const firstName = document.getElementById('signUpFirstName').value;
             const lastName = document.getElementById('signUpLastName').value;
@@ -241,7 +222,7 @@
                 // Handle verification if needed
                 if (signUp.status === 'complete') {
                     await clerk.setActive({ session: signUp.createdSessionId });
-                    // The session listener will handle the redirect
+                    window.location.href = 'in.html';
                 } else {
                     // Show success message and switch to sign in
                     successElement.textContent = 'Account created successfully! Please check your email for verification, then sign in.';
@@ -250,19 +231,16 @@
                     setTimeout(() => {
                         document.getElementById('showSignIn').click();
                         document.getElementById('signInEmail').value = email;
-                        isProcessing = false;
                     }, 3000);
                 }
                 
             } catch (error) {
-                console.error('Sign-up error:', error);
                 errorElement.textContent = error.errors?.[0]?.message || 'Sign up failed. Please try again.';
                 errorElement.style.display = 'block';
-                
+            } finally {
                 // Re-enable button
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Create Account';
-                isProcessing = false;
             }
         });
     </script>
