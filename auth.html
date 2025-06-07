@@ -222,7 +222,7 @@
                 // Handle verification if needed
                 if (signUp.status === 'complete') {
                     await clerk.setActive({ session: signUp.createdSessionId });
-                    window.location.href = 'in.html';
+                    window.location.href = 'index.html';
                 } else {
                     // Show success message and switch to sign in
                     successElement.textContent = 'Account created successfully! Please check your email for verification, then sign in.';
