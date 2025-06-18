@@ -287,12 +287,12 @@ window.clearLogs = clearLogs;
   }
 
   // Pressure
-  const pressureElem = document.getElementById("pressure");
-  if (data.pressure?.pressure) {
-    pressureElem.textContent = `${data.pressure.pressure} Pa`;
-  } else {
-    pressureElem.textContent = "--";
-  }
+//   const pressureElem = document.getElementById("pressure");
+//   if (data.pressure?.pressure) {
+//     pressureElem.textContent = `${data.pressure.pressure} Pa`;
+//   } else {
+//     pressureElem.textContent = "--";
+//   }
 
   // Accelerometer
   const accel = data.accel ?? {};

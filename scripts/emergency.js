@@ -275,23 +275,6 @@ function sendEmergencyVoiceAlert(contactTypes = ['caregiver', 'medical']) {
     }
     
     const phoneNumbers = filteredContacts.map(contact => contact.phone);
-    
-    // Get location to include in call (optional)
-    getUserLocation().then(locationURL => {
-        let enhancedMessage = "EMERGENCY ALERT: Medical assistance needed. Please check your messages for details.";
-        if (locationURL !== "Location unavailable" && locationURL !== "Location services not available") {
-            enhancedMessage += ` Location: ${locationURL}`;
-        }
-
-        // Initiate voice call with formatted numbers
-        sendVoiceCall(phoneNumbers, function(success, response) {
-            if (success) {
-                showAlert('Emergency voice calls initiated', 'success');
-            } else {
-                showAlert('Failed to initiate voice calls', 'error');
-            }
-        });
-    });
 }
 
 // Modified sendVoiceCall to use proper error handling
