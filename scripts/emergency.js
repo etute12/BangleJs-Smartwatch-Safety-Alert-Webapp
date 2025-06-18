@@ -98,20 +98,20 @@ function sendSMS(phoneNumbers, message, callback) {
 function sendEmergencyAlert(message, contactTypes = ['caregiver', 'medical'], metricsData = null) {
     // Get all contacts from localStorage
     const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
-    
+   
     // Filter contacts by type if specified
-    const filteredContacts = contacts.filter(contact => 
+    const filteredContacts = contacts.filter(contact =>
         contactTypes.includes(contact.type)
     );
-    
+   
     if (filteredContacts.length === 0) {
         showAlert('No emergency contacts found', 'error');
         return;
     }
-    
+   
     // Extract phone numbers
     const phoneNumbers = filteredContacts.map(contact => contact.phone);
-    
+   
     // Build message with metrics data if available
     let enhancedMessage = message;
     if (metricsData) {
@@ -119,52 +119,28 @@ function sendEmergencyAlert(message, contactTypes = ['caregiver', 'medical'], me
         if (metricsData.heartRate) enhancedMessage += `\n- Heart Rate: ${metricsData.heartRate} bpm`;
         if (metricsData.temp) enhancedMessage += `\n- Temperature: ${metricsData.temp.toFixed(1)}°C`;
         if (metricsData.pressure) enhancedMessage += `\n- Pressure: ${metricsData.pressure} Pa`;
-        
+       
         // Update metrics display in modal
         const metricsDisplay = document.getElementById('emergencyMetricsDisplay');
         if (metricsDisplay) {
             let metricsHTML = '<strong>Critical Readings:</strong><ul>';
             if (metricsData.heartRate) metricsHTML += `<li>Heart Rate: <span class="text-red-600">${metricsData.heartRate} bpm</span></li>`;
             if (metricsData.temp) metricsHTML += `<li>Temperature: <span class="text-red-600">${metricsData.temp.toFixed(1)}°C</span></li>`;
-            if (metricsData.pressure) metricsHTML += `<li>Pressure: ${metricsData.pressure} Pa</li>`;
+            // if (metricsData.pressure) metricsHTML += `<li>Pressure: ${metricsData.pressure} Pa</li>`;
             metricsHTML += '</ul>';
             metricsDisplay.innerHTML = metricsHTML;
         }
     }
-    
-    // Get location and add to message
-    getUserLocation().then(locationURL => {
-        if (locationURL !== "Location unavailable" && locationURL !== "Location services not available") {
-            enhancedMessage += `\n\nLocation: ${locationURL}`;
-        }
-        
-        // Send the SMS
-        sendSMS(phoneNumbers, enhancedMessage, function(success, response) {
-            if (success) {
-                showAlert('Emergency alerts sent successfully', 'success');
-            } else {
-                showAlert('Failed to send some or all alerts', 'error');
-            }
-        });
-    });
-}
-
-// Helper function to get user's location
-function getUserLocation() {
-    return new Promise((resolve) => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    resolve(`https://maps.google.com/?q=${lat},${lng}`);
-                },
-                () => {
-                    resolve("Location unavailable");
-                }
-            );
+   
+    // Add hardcoded location to message
+    enhancedMessage += `\n\nLocation: https://maps.app.goo.gl/G45Js48qmYkdaWFe6?g_st=atm`;
+       
+    // Send the SMS
+    sendSMS(phoneNumbers, enhancedMessage, function(success, response) {
+        if (success) {
+            showAlert('Emergency alerts sent successfully', 'success');
         } else {
-            resolve("Location services not available");
+            showAlert('Failed to send some or all alerts', 'error');
         }
     });
 }
@@ -272,20 +248,20 @@ function addEmergencyAlertButton() {
 window.sendEmergencyAlert = sendEmergencyAlert;
 window.getUserLocation = getUserLocation;
 
-// New function to handle voice call button click
-function handleVoiceCall() {
-    const types = [];
-    if (document.getElementById('alertCaregivers').checked) types.push('caregiver');
-    if (document.getElementById('alertMedical').checked) types.push('medical');
+// // New function to handle voice call button click
+// function handleVoiceCall() {
+//     const types = [];
+//     if (document.getElementById('alertCaregivers').checked) types.push('caregiver');
+//     if (document.getElementById('alertMedical').checked) types.push('medical');
 
-    if (types.length === 0) {
-        showAlert('Please select at least one contact type', 'error');
-        return;
-    }
+//     if (types.length === 0) {
+//         showAlert('Please select at least one contact type', 'error');
+//         return;
+//     }
 
-    sendEmergencyVoiceAlert(types);
-    hideEmergencyAlertModal();
-}
+//     sendEmergencyVoiceAlert(types);
+//     hideEmergencyAlertModal();
+// }
 
 // Modified voice alert function to accept contact types
 function sendEmergencyVoiceAlert(contactTypes = ['caregiver', 'medical']) {
@@ -320,46 +296,46 @@ function sendEmergencyVoiceAlert(contactTypes = ['caregiver', 'medical']) {
 }
 
 // Modified sendVoiceCall to use proper error handling
-function sendVoiceCall(phoneNumbers, callback) {
-    const apiKey = 'atsk_419a4b38a39d709b445b2d8f8559b312e7b1ffe74cd93fc543877072ca6188097fac320e';
-    const username = 'testella';
-    const from = 'YOUR_VOICE_ENABLED_NUMBER';
-    const voiceXmlUrl = 'URL_TO_YOUR_VOICEXML_FILE';
+// function sendVoiceCall(phoneNumbers, callback) {
+//     const apiKey = 'atsk_419a4b38a39d709b445b2d8f8559b312e7b1ffe74cd93fc543877072ca6188097fac320e';
+//     const username = 'testella';
+//     const from = 'YOUR_VOICE_ENABLED_NUMBER';
+//     const voiceXmlUrl = 'URL_TO_YOUR_VOICEXML_FILE';
 
-    const formattedNumbers = phoneNumbers.map(number => {
-        if (!number.startsWith('+')) {
-            return number.startsWith('0') ? '+234' + number.substring(1) : '+234' + number;
-        }
-        return number;
-    }).join(',');
+//     const formattedNumbers = phoneNumbers.map(number => {
+//         if (!number.startsWith('+')) {
+//             return number.startsWith('0') ? '+234' + number.substring(1) : '+234' + number;
+//         }
+//         return number;
+//     }).join(',');
 
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('from', from);
-    formData.append('to', formattedNumbers);
-    formData.append('request', voiceXmlUrl);
+//     const formData = new URLSearchParams();
+//     formData.append('username', username);
+//     formData.append('from', from);
+//     formData.append('to', formattedNumbers);
+//     formData.append('request', voiceXmlUrl);
 
-    fetch('https://api.africastalking.com/version1/voice/call', {
-        method: 'POST',
-        headers: {
-            'apiKey': apiKey,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === 'Success') {
-            callback(true, data);
-        } else {
-            throw new Error(data.errorMessage || 'Unknown error from API');
-        }
-    })
-    .catch(error => {
-        console.error('Voice call error:', error);
-        callback(false, error.message);
-    });
-}
+//     fetch('https://api.africastalking.com/version1/voice/call', {
+//         method: 'POST',
+//         headers: {
+//             'apiKey': apiKey,
+//             'Content-Type': 'application/x-www-form-urlencoded'
+//         },
+//         body: formData
+//     })
+//     .then(response => {
+//         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+//         return response.json();
+//     })
+//     .then(data => {
+//         if (data.status === 'Success') {
+//             callback(true, data);
+//         } else {
+//             throw new Error(data.errorMessage || 'Unknown error from API');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Voice call error:', error);
+//         callback(false, error.message);
+//     });
+// }
