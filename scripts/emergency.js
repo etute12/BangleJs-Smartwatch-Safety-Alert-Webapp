@@ -245,7 +245,7 @@ function addEmergencyAlertButton() {
 
 // Make functions available globally
 window.sendEmergencyAlert = sendEmergencyAlert;
-window.getUserLocation = getUserLocation;
+
 
 // // New function to handle voice call button click
 // function handleVoiceCall() {
@@ -263,19 +263,19 @@ window.getUserLocation = getUserLocation;
 // }
 
 // Modified voice alert function to accept contact types
-function sendEmergencyVoiceAlert(contactTypes = ['caregiver', 'medical']) {
-    const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
-    const filteredContacts = contacts.filter(contact => 
-        contactTypes.includes(contact.type)
-    );
+// function sendEmergencyVoiceAlert(contactTypes = ['caregiver', 'medical']) {
+//     const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+//     const filteredContacts = contacts.filter(contact => 
+//         contactTypes.includes(contact.type)
+//     );
     
-    if (filteredContacts.length === 0) {
-        showAlert('No emergency contacts found', 'error');
-        return;
-    }
+//     if (filteredContacts.length === 0) {
+//         showAlert('No emergency contacts found', 'error');
+//         return;
+//     }
     
-    const phoneNumbers = filteredContacts.map(contact => contact.phone);
-}
+//     const phoneNumbers = filteredContacts.map(contact => contact.phone);
+// }
 
 // Modified sendVoiceCall to use proper error handling
 // function sendVoiceCall(phoneNumbers, callback) {

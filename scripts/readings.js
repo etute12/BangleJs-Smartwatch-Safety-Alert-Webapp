@@ -316,10 +316,6 @@ window.clearLogs = clearLogs;
 
     document.getElementById("emergencyModal").style.display = "block";
 
-    // Auto-call if no user interaction after 10s
-    if (!emergencyTimeout) {
-      emergencyTimeout = setTimeout(callCaregiver, 10000);
-    }
   }
 
   // ⚠️ Don't auto-dismiss the emergency alert
