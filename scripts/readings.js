@@ -249,8 +249,6 @@ window.clearLogs = clearLogs;
 
 
 
-
-
   const alertSound = document.getElementById("alertSound");
   const emergencyBanner = document.getElementById("emergencyBanner");
 
@@ -287,12 +285,12 @@ window.clearLogs = clearLogs;
   }
 
   // Pressure
-//   const pressureElem = document.getElementById("pressure");
-//   if (data.pressure?.pressure) {
-//     pressureElem.textContent = `${data.pressure.pressure} Pa`;
-//   } else {
-//     pressureElem.textContent = "--";
-//   }
+  const pressureElem = document.getElementById("pressure");
+  if (data.pressure?.pressure) {
+    pressureElem.textContent = `${data.pressure.pressure} Pa`;
+  } else {
+    pressureElem.textContent = "--";
+  }
 
   // Accelerometer
   const accel = data.accel ?? {};
@@ -316,6 +314,10 @@ window.clearLogs = clearLogs;
 
     document.getElementById("emergencyModal").style.display = "block";
 
+    // Auto-call if no user interaction after 10s
+    if (!emergencyTimeout) {
+      emergencyTimeout = setTimeout(callCaregiver, 10000);
+    }
   }
 
   // ⚠️ Don't auto-dismiss the emergency alert
