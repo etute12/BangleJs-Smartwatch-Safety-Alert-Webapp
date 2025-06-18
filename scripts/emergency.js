@@ -103,7 +103,7 @@ function sendSMS(phoneNumbers, message, callback) {
     const requestBody = {
         to: formattedNumbers,
         message: message,
-        sender_name: 'HealthAlert', // Changed to a more descriptive sender name
+        sender_name: 'SChamp', // Changed to a more descriptive sender name
         route: 'dnd' // Use DND route for emergency messages
     };
     
