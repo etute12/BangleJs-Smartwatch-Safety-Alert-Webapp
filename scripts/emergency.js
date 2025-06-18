@@ -57,7 +57,7 @@ function createEmergencyElements() {
     if (!document.getElementById('alertSound')) {
         const audio = document.createElement('audio');
         audio.id = 'alertSound';
-        audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmocDkOL0fPTgjMGHm7A7+OZURE'; // Simple beep sound
+        audio.src = 'alert.wav'; // Simple beep sound
         audio.preload = 'auto';
         document.body.appendChild(audio);
         console.log('Alert sound created');
