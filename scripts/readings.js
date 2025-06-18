@@ -99,11 +99,11 @@ const updateUI = (data) => {
 
     // --- START OF BLOOD PRESSURE CHANGES ---
     // --- START OF ATMOSPHERIC PRESSURE DISPLAY ---
-    const pressureElem = document.getElementById("pressure"); // Assuming 'pressure' is the ID of your HTML element
-    if (typeof data.pressure === "number") { // Check for the 'pressure' field from Bangle.js
-        const atmosphericPressureValue = data.pressure.toFixed(1); // Round to 1 decimal place
-        pressureElem.textContent = `${atmosphericPressureValue} hPa`; // Display in hectopascals (hPa)
-        logData('Atmospheric Pressure', `${atmosphericPressureValue} hPa`); 
+    // const pressureElem = document.getElementById("pressure"); // Assuming 'pressure' is the ID of your HTML element
+    // if (typeof data.pressure === "number") { // Check for the 'pressure' field from Bangle.js
+    //     const atmosphericPressureValue = data.pressure.toFixed(1); // Round to 1 decimal place
+    //     pressureElem.textContent = `${atmosphericPressureValue} hPa`; // Display in hectopascals (hPa)
+    //     logData('Atmospheric Pressure', `${atmosphericPressureValue} hPa`); 
         
         // Log to table
 
@@ -117,14 +117,14 @@ const updateUI = (data) => {
         //     bpElem.parentElement.style.backgroundColor = "";
         //     bpElem.parentElement.style.border = "";
         // }
-    } else {
-        pressureElem.textContent = "No Pressure Data"; // Message if atmospheric pressure is not available
-        console.log('Atmospheric Pressure data: Not available or invalid.'); 
-    }
+    // } else {
+    //     pressureElem.textContent = "No Pressure Data"; // Message if atmospheric pressure is not available
+    //     console.log('Atmospheric Pressure data: Not available or invalid.'); 
+    // }
     // --- END OF BLOOD PRESSURE CHANGES ---
 
 
-    // Accelerometer Log (no changes needed here as it uses data.accel)
+    // Accelerometer Log 
     const accel = data.accel ?? {};
     if (accel.x !== undefined) {
         const accelValue = `x: ${accel.x?.toFixed(2)}, y: ${accel.y?.toFixed(2)}, z: ${accel.z?.toFixed(2)}`;
@@ -132,7 +132,7 @@ const updateUI = (data) => {
         logData('Accelerometer', accelValue);
     }
 
-    // Magnetometer Log (no changes needed here as it uses data.mag)
+    // Magnetometer Log 
     const mag = data.mag ?? {};
     if (mag.x !== undefined) {
         const magValue = `x: ${mag.x}, y: ${mag.y}, z: ${mag.z}`;
@@ -237,3 +237,97 @@ async function connect() {
 // Make functions available globally
 window.connect = connect;
 window.clearLogs = clearLogs;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const alertSound = document.getElementById("alertSound");
+  const emergencyBanner = document.getElementById("emergencyBanner");
+
+  let emergencyTriggered = false;
+
+  // Heart Rate Check
+  const hrElem = document.getElementById("hr");
+  if (typeof data.heartRate === "number" && data.heartRate > 0) {
+    hrElem.textContent = `${data.heartRate} bpm`;
+    if (data.heartRate > 120) {
+      hrElem.parentElement.style.backgroundColor = "#ffcccc";
+      hrElem.parentElement.style.border = "2px solid red";
+      emergencyTriggered = true;
+    } else {
+      hrElem.parentElement.style.backgroundColor = "white";
+      hrElem.parentElement.style.border = "none";
+    }
+  } else {
+    hrElem.textContent = "No data";
+  }
+
+  // Temperature Check
+  const tempElem = document.getElementById("temp");
+  if (typeof data.temp === "number") {
+    tempElem.textContent = `${data.temp.toFixed(1)} °C`;
+    if (data.temp > 38.5) {
+      tempElem.parentElement.style.backgroundColor = "#ffe0b2";
+      tempElem.parentElement.style.border = "2px solid orange";
+      emergencyTriggered = true;
+    } else {
+      tempElem.parentElement.style.backgroundColor = "white";
+      tempElem.parentElement.style.border = "none";
+    }
+  }
+
+  // Pressure
+  const pressureElem = document.getElementById("pressure");
+  if (data.pressure?.pressure) {
+    pressureElem.textContent = `${data.pressure.pressure} Pa`;
+  } else {
+    pressureElem.textContent = "--";
+  }
+
+  // Accelerometer
+  const accel = data.accel ?? {};
+  document.getElementById("accel").textContent = `x: ${accel.x?.toFixed(
+    2
+  )}, y: ${accel.y?.toFixed(2)}, z: ${accel.z?.toFixed(2)}`;
+
+  // Magnetometer
+  const mag = data.mag ?? {};
+  document.getElementById(
+    "mag"
+  ).textContent = `x: ${mag.x}, y: ${mag.y}, z: ${mag.z}`;
+
+  // 🚨 Emergency Display
+  if (emergencyTriggered && !emergencyActive) {
+    emergencyActive = true;
+    emergencyBanner.style.display = "block";
+    if (alertSound && alertSound.paused) {
+      alertSound.play();
+    }
+
+    document.getElementById("emergencyModal").style.display = "block";
+
+    // Auto-call if no user interaction after 10s
+    if (!emergencyTimeout) {
+      emergencyTimeout = setTimeout(callCaregiver, 10000);
+    }
+  }
+
+  // ⚠️ Don't auto-dismiss the emergency alert
+  if (!emergencyTriggered && emergencyActive) {
+    emergencyActive = false;
+    emergencyBanner.style.display = "none";
+    document.getElementById("emergencyModal").style.display = "none";
+    clearTimeout(emergencyTimeout);
+    emergencyTimeout = null;
+    currentCaregiver = 0;
+  }

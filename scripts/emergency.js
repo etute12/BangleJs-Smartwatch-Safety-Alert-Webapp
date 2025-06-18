@@ -48,7 +48,7 @@ function createEmergencyElements() {
     if (!document.getElementById('alertSound')) {
         const audio = document.createElement('audio');
         audio.id = 'alertSound';
-        audio.src = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'; // Replace with your alert sound
+        audio.src = 'alert.wav'; // Replace with your alert sound
         audio.preload = 'auto';
         document.body.appendChild(audio);
     }
