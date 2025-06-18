@@ -118,7 +118,7 @@ function sendEmergencyAlert(message, contactTypes = ['caregiver', 'medical'], me
         enhancedMessage += '\n\nHealth Metrics:';
         if (metricsData.heartRate) enhancedMessage += `\n- Heart Rate: ${metricsData.heartRate} bpm`;
         if (metricsData.temp) enhancedMessage += `\n- Temperature: ${metricsData.temp.toFixed(1)}°C`;
-        if (metricsData.pressure) enhancedMessage += `\n- Pressure: ${metricsData.pressure} Pa`;
+        // if (metricsData.pressure) enhancedMessage += `\n- Pressure: ${metricsData.pressure} Pa`;
        
         // Update metrics display in modal
         const metricsDisplay = document.getElementById('emergencyMetricsDisplay');
@@ -188,7 +188,6 @@ function createEmergencyAlertModal() {
                     </div>
                 </div>
                 <div class="flex justify-end gap-2">
-                    <button id="voiceCallButton" class="px-4 py-2 bg-red-600 text-white rounded">Call</button>
                     <button id="cancelAlert" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
                     <button id="sendAlert" class="px-4 py-2 bg-red-600 text-white rounded">Send Alert</button>
                 </div>
