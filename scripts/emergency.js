@@ -1,11 +1,8 @@
-
-
-
-
-
-// emergency.js
+// emergency.js - IMPROVED VERSION
 // Sendchamp SMS functionality for emergency alerts
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Emergency.js loaded and DOM ready');
+    
     // Add emergency alert button to the UI
     addEmergencyAlertButton();
     
@@ -14,17 +11,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create emergency banner and modal
     createEmergencyElements();
+    
+    console.log('Emergency elements created');
 });
 
 // Function to create emergency banner and modal
 function createEmergencyElements() {
+    console.log('Creating emergency elements...');
+    
     // Create emergency banner if not exists
     if (!document.getElementById('emergencyBanner')) {
         const banner = document.createElement('div');
         banner.id = 'emergencyBanner';
-        banner.className = 'fixed top-0 left-0 w-full bg-red-600 text-white text-center py-4 hidden';
+        banner.className = 'fixed top-0 left-0 w-full bg-red-600 text-white text-center py-4 hidden z-50';
         banner.innerHTML = '<strong>🚨 EMERGENCY ALERT</strong>: Abnormal health readings detected!';
         document.body.appendChild(banner);
+        console.log('Emergency banner created');
     }
     
     // Create emergency modal if not exists
@@ -44,131 +46,205 @@ function createEmergencyElements() {
         
         // Add event listener for dismiss button
         document.getElementById('dismissEmergency').addEventListener('click', function() {
-            document.getElementById('emergencyModal').style.display = 'none';
-            document.getElementById('emergencyBanner').style.display = 'none';
+            document.getElementById('emergencyModal').classList.add('hidden');
+            document.getElementById('emergencyBanner').classList.add('hidden');
         });
+        
+        console.log('Emergency modal created');
     }
     
     // Create audio element if not exists
     if (!document.getElementById('alertSound')) {
         const audio = document.createElement('audio');
         audio.id = 'alertSound';
-        audio.src = 'alert.wav'; // Replace with your alert sound
+        audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmocDkOL0fPTgjMGHm7A7+OZURE'; // Simple beep sound
         audio.preload = 'auto';
         document.body.appendChild(audio);
+        console.log('Alert sound created');
     }
 }
 
 // Function to send SMS using Sendchamp API
 function sendSMS(phoneNumbers, message, callback) {
+    console.log('📱 Attempting to send SMS to:', phoneNumbers);
+    console.log('📱 Message:', message);
+    
     // Replace with your actual Sendchamp API key
     const apiKey = 'sendchamp_live_$2a$10$DoRUHJ.jZHGHYt502WlCcuQ91VzB8ClBeUZQ9TujekbQnLdb6GNS.';
     
+    // Validate inputs
+    if (!phoneNumbers || phoneNumbers.length === 0) {
+        console.error('No phone numbers provided');
+        if (callback) callback(false, 'No phone numbers provided');
+        return;
+    }
+    
+    if (!message || message.trim() === '') {
+        console.error('No message provided');
+        if (callback) callback(false, 'No message provided');
+        return;
+    }
+    
     // Format phone numbers for Sendchamp API (ensure they have country code)
     const formattedNumbers = phoneNumbers.map(number => {
+        // Remove any spaces, dashes, or parentheses
+        const cleanNumber = number.replace(/[\s\-\(\)]/g, '');
+        
         // If number doesn't start with '+', add Nigeria's code as default
-        if (!number.startsWith('+')) {
-            return number.startsWith('0') ? '+234' + number.substring(1) : '+234' + number;
+        if (!cleanNumber.startsWith('+')) {
+            return cleanNumber.startsWith('0') ? '+234' + cleanNumber.substring(1) : '+234' + cleanNumber;
         }
-        return number;
+        return cleanNumber;
     });
     
+    console.log('📱 Formatted numbers:', formattedNumbers);
+    
     // Prepare the API request
+    const requestBody = {
+        to: formattedNumbers,
+        message: message,
+        sender_name: 'HealthAlert', // Changed to a more descriptive sender name
+        route: 'dnd' // Use DND route for emergency messages
+    };
+    
+    console.log('📱 Request body:', requestBody);
+    
     fetch('https://api.sendchamp.com/api/v1/sms/send', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
-        body: JSON.stringify({
-            to: formattedNumbers,
-            message: message,
-            sender_name: 'SChamp', // Change to your registered sender ID
-            route: 'dnd' // Use DND route for emergency messages
-        })
+        body: JSON.stringify(requestBody)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📱 SMS API Response status:', response.status);
+        return response.json();
+    })
     .then(data => {
-        console.log('SMS sent successfully:', data);
+        console.log('📱 SMS sent successfully:', data);
         if (callback) callback(true, data);
     })
     .catch(error => {
-        console.error('Error sending SMS:', error);
+        console.error('📱 Error sending SMS:', error);
         if (callback) callback(false, error);
     });
 }
 
 // Function to handle emergency alerts
 function sendEmergencyAlert(message, contactTypes = ['caregiver', 'medical'], metricsData = null) {
+    console.log('🚨 sendEmergencyAlert called with:', { message, contactTypes, metricsData });
+    
     // Get all contacts from localStorage
-    const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+    let contacts;
+    try {
+        contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+        console.log('📞 Retrieved contacts from localStorage:', contacts);
+    } catch (error) {
+        console.error('Error parsing emergency contacts from localStorage:', error);
+        showAlert('Error retrieving emergency contacts', 'error');
+        return;
+    }
     
     // Filter contacts by type if specified
     const filteredContacts = contacts.filter(contact => 
         contactTypes.includes(contact.type)
     );
     
+    console.log('📞 Filtered contacts:', filteredContacts);
+    
     if (filteredContacts.length === 0) {
-        showAlert('No emergency contacts found', 'error');
+        console.warn('No emergency contacts found for types:', contactTypes);
+        showAlert('No emergency contacts found for the specified types', 'error');
         return;
     }
     
-    // Extract phone numbers
-    const phoneNumbers = filteredContacts.map(contact => contact.phone);
+    // Extract phone numbers - more robust extraction
+    const phoneNumbers = filteredContacts
+        .map(contact => contact.phone || contact.phoneNumber || contact.number)
+        .filter(phone => phone && phone.trim() !== '');
+    
+    console.log('📞 Extracted phone numbers:', phoneNumbers);
+    
+    if (phoneNumbers.length === 0) {
+        console.warn('No valid phone numbers found in contacts');
+        showAlert('No valid phone numbers found in emergency contacts', 'error');
+        return;
+    }
     
     // Build message with metrics data if available
     let enhancedMessage = message;
     if (metricsData) {
         enhancedMessage += '\n\nHealth Metrics:';
-        if (metricsData.heartRate) enhancedMessage += `\n- Heart Rate: ${metricsData.heartRate} bpm`;
-        if (metricsData.temp) enhancedMessage += `\n- Temperature: ${metricsData.temp.toFixed(1)}°C`;
-
+        if (metricsData.heartRate) {
+            enhancedMessage += `\n- Heart Rate: ${metricsData.heartRate} bpm`;
+        }
+        if (metricsData.temp) {
+            enhancedMessage += `\n- Temperature: ${parseFloat(metricsData.temp).toFixed(1)}°C`;
+        }
         
         // Update metrics display in modal
         const metricsDisplay = document.getElementById('emergencyMetricsDisplay');
         if (metricsDisplay) {
             let metricsHTML = '<strong>Critical Readings:</strong><ul>';
-            if (metricsData.heartRate) metricsHTML += `<li>Heart Rate: <span class="text-red-600">${metricsData.heartRate} bpm</span></li>`;
-            if (metricsData.temp) metricsHTML += `<li>Temperature: <span class="text-red-600">${metricsData.temp.toFixed(1)}°C</span></li>`;
+            if (metricsData.heartRate) {
+                metricsHTML += `<li>Heart Rate: <span class="text-red-600 font-bold">${metricsData.heartRate} bpm</span></li>`;
+            }
+            if (metricsData.temp) {
+                metricsHTML += `<li>Temperature: <span class="text-red-600 font-bold">${parseFloat(metricsData.temp).toFixed(1)}°C</span></li>`;
+            }
             metricsHTML += '</ul>';
             metricsDisplay.innerHTML = metricsHTML;
         }
     }
     
-     // Add hardcoded location to message
-     enhancedMessage += `\n\nLocation: https://maps.app.goo.gl/G45Js48qmYkdaWFe6?g_st=atm`;
-        
-        // Send the SMS
-        sendSMS(phoneNumbers, enhancedMessage, function(success, response) {
-            if (success) {
-                showAlert('Emergency alerts sent successfully', 'success');
-            } else {
-                showAlert('Failed to send some or all alerts', 'error');
-            }
-        });
+    // Add timestamp and location to message
+    const timestamp = new Date().toLocaleString();
+    enhancedMessage += `\n\nTime: ${timestamp}`;
+    enhancedMessage += `\nLocation: https://maps.app.goo.gl/G45Js48qmYkdaWFe6?g_st=atm`;
+    
+    console.log('📱 Final message to send:', enhancedMessage);
+    
+    // Send the SMS
+    sendSMS(phoneNumbers, enhancedMessage, function(success, response) {
+        if (success) {
+            console.log('✅ Emergency alerts sent successfully');
+            showAlert(`Emergency alerts sent to ${phoneNumbers.length} contact(s)`, 'success');
+        } else {
+            console.error('❌ Failed to send emergency alerts:', response);
+            showAlert('Failed to send some or all emergency alerts', 'error');
+        }
+    });
 }
-
-// Helper function to get user's location
-
 
 // Function to show alerts to the user
 function showAlert(message, type = 'info') {
+    console.log(`Alert (${type}):`, message);
+    
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} fixed top-4 right-4 p-4 rounded shadow-lg`;
+    alertDiv.className = `alert alert-${type} fixed top-4 right-4 p-4 rounded shadow-lg z-50`;
     
     // Set background color based on type
-    if (type === 'success') alertDiv.style.backgroundColor = '#4CAF50';
-    else if (type === 'error') alertDiv.style.backgroundColor = '#F44336';
-    else alertDiv.style.backgroundColor = '#2196F3';
+    if (type === 'success') {
+        alertDiv.style.backgroundColor = '#4CAF50';
+    } else if (type === 'error') {
+        alertDiv.style.backgroundColor = '#F44336';
+    } else {
+        alertDiv.style.backgroundColor = '#2196F3';
+    }
     
     alertDiv.style.color = 'white';
+    alertDiv.style.maxWidth = '300px';
     alertDiv.textContent = message;
     
     document.body.appendChild(alertDiv);
     
     // Remove the alert after 5 seconds
     setTimeout(() => {
-        alertDiv.remove();
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
     }, 5000);
 }
 
@@ -176,8 +252,8 @@ function showAlert(message, type = 'info') {
 function createEmergencyAlertModal() {
     const modalHTML = `
         <div id="emergencyAlertOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-            <div id="emergencyAlertModal" class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-                <h3 class="text-xl font-bold mb-4">Send Emergency Alert</h3>
+            <div id="emergencyAlertModal" class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4 text-red-600">🚨 Send Emergency Alert</h3>
                 <div class="mb-4">
                     <label class="block text-gray-700 mb-2">Alert Message:</label>
                     <textarea id="emergencyMessage" class="w-full p-2 border rounded" rows="4" 
@@ -194,8 +270,8 @@ function createEmergencyAlertModal() {
                     </div>
                 </div>
                 <div class="flex justify-end gap-2">
-                    <button id="cancelAlert" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                    <button id="sendAlert" class="px-4 py-2 bg-red-600 text-white rounded">Send Alert</button>
+                    <button id="cancelAlert" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button id="sendAlert" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Send Alert</button>
                 </div>
             </div>
         </div>
@@ -231,18 +307,30 @@ function createEmergencyAlertModal() {
 
 // Function to show the emergency alert modal
 function showEmergencyAlertModal() {
-    document.getElementById('emergencyAlertOverlay').classList.remove('hidden');
+    const overlay = document.getElementById('emergencyAlertOverlay');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+    }
 }
 
 // Function to hide the emergency alert modal
 function hideEmergencyAlertModal() {
-    document.getElementById('emergencyAlertOverlay').classList.add('hidden');
+    const overlay = document.getElementById('emergencyAlertOverlay');
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
 }
 
 // Function to add an emergency alert button to the UI
 function addEmergencyAlertButton() {
+    // Check if button already exists
+    if (document.getElementById('emergencyAlertButton')) {
+        return;
+    }
+    
     const emergencyButton = document.createElement('button');
-    emergencyButton.className = 'fixed bottom-4 right-4 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-red-700 transition-colors';
+    emergencyButton.id = 'emergencyAlertButton';
+    emergencyButton.className = 'fixed bottom-4 right-4 bg-red-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-red-700 transition-colors z-40';
     emergencyButton.innerHTML = '🚨 Send Alert';
     emergencyButton.onclick = showEmergencyAlertModal;
     
@@ -251,3 +339,4 @@ function addEmergencyAlertButton() {
 
 // Make functions available globally
 window.sendEmergencyAlert = sendEmergencyAlert;
+window.createEmergencyElements = createEmergencyElements;

@@ -1,4 +1,4 @@
-// readings.js
+// readings.js - CLEANED VERSION
 let emergencyActive = false;
 let currentCaregiver = 0;
 let emergencyTimeout;
@@ -19,30 +19,55 @@ function logData(metric, value, status = 'normal') {
     
     // Add to table
     const logsBody = document.getElementById('logsBody');
-    const row = document.createElement('tr');
-    
-    row.innerHTML = `
-        <td class="px-4 py-3">${timestamp}</td>
-        <td class="px-4 py-3">${metric}</td>
-        <td class="px-4 py-3">${value}</td>
-        <td class="px-4 py-3">
-            <span class="px-2 py-1 rounded-full ${status === 'emergency' ? 
-                'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-500' : 
-                'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-500'}">
-                ${status}
-            </span>
-        </td>
-    `;
-    
-    logsBody.prepend(row); // Add new entries at the top
+    if (logsBody) {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td class="px-4 py-3">${timestamp}</td>
+            <td class="px-4 py-3">${metric}</td>
+            <td class="px-4 py-3">${value}</td>
+            <td class="px-4 py-3">
+                <span class="px-2 py-1 rounded-full ${status === 'emergency' ? 
+                    'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-500' : 
+                    'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-500'}">
+                    ${status}
+                </span>
+            </td>
+        `;
+        
+        logsBody.prepend(row); // Add new entries at the top
+    }
 }
 
 function clearLogs() {
     logs = [];
-    document.getElementById('logsBody').innerHTML = '';
+    const logsBody = document.getElementById('logsBody');
+    if (logsBody) {
+        logsBody.innerHTML = '';
+    }
+}
+
+function debugEmergencyState(data) {
+    console.log('=== Emergency Debug ===');
+    console.log('Heart Rate:', data.heartRate);
+    console.log('Temperature:', data.temp);
+    console.log('Emergency Active:', emergencyActive);
+    console.log('Emergency function available:', typeof window.sendEmergencyAlert);
+    console.log('Emergency banner exists:', !!document.getElementById("emergencyBanner"));
+    console.log('Emergency modal exists:', !!document.getElementById("emergencyModal"));
+    
+    // Check thresholds
+    const hrEmergency = data.heartRate > 120;
+    const tempEmergency = data.temp > 38.5;
+    console.log('HR Emergency:', hrEmergency);
+    console.log('Temp Emergency:', tempEmergency);
+    console.log('Should trigger emergency:', hrEmergency || tempEmergency);
+    console.log('========================');
 }
 
 const updateUI = (data) => {
+    debugEmergencyState(data); // Debug logging
+    
     // Check if emergency.js functions are available
     if (typeof window.sendEmergencyAlert !== 'function') {
         console.error('Emergency alert functions not loaded');
@@ -69,6 +94,7 @@ const updateUI = (data) => {
             hrElem.parentElement.style.backgroundColor = "#ffcccc";
             hrElem.parentElement.style.border = "2px solid red";
             emergencyTriggered = true;
+            console.log('🚨 Heart Rate Emergency Triggered:', hrValue);
         } else {
             hrElem.parentElement.style.backgroundColor = "";
             hrElem.parentElement.style.border = "";
@@ -80,55 +106,32 @@ const updateUI = (data) => {
     // Temperature Check and Log
     const tempElem = document.getElementById("temp");
     if (typeof data.temp === "number") {
-        const tempValue = data.temp.toFixed(1);
-        tempElem.textContent = `${tempValue} °C`;
+        const tempValue = parseFloat(data.temp);
+        tempElem.textContent = `${tempValue.toFixed(1)} °C`;
         emergencyMetrics.temp = tempValue;
         
-        const tempStatus = data.temp > 38.5 ? 'emergency' : 'normal';
-        logData('Temperature', `${tempValue}°C`, tempStatus);
+        const tempStatus = tempValue > 38.5 ? 'emergency' : 'normal';
+        logData('Temperature', `${tempValue.toFixed(1)}°C`, tempStatus);
         
-        if (data.temp > 38.5) {
+        if (tempValue > 38.5) {
             tempElem.parentElement.style.backgroundColor = "#ffe0b2";
             tempElem.parentElement.style.border = "2px solid orange";
             emergencyTriggered = true;
+            console.log('🚨 Temperature Emergency Triggered:', tempValue);
         } else {
             tempElem.parentElement.style.backgroundColor = "";
             tempElem.parentElement.style.border = "";
         }
     }
 
-    // --- START OF BLOOD PRESSURE CHANGES ---
-    // --- START OF ATMOSPHERIC PRESSURE DISPLAY ---
-    // const pressureElem = document.getElementById("pressure"); // Assuming 'pressure' is the ID of your HTML element
-    // if (typeof data.pressure === "number") { // Check for the 'pressure' field from Bangle.js
-    //     const atmosphericPressureValue = data.pressure.toFixed(1); // Round to 1 decimal place
-    //     pressureElem.textContent = `${atmosphericPressureValue} hPa`; // Display in hectopascals (hPa)
-    //     logData('Atmospheric Pressure', `${atmosphericPressureValue} hPa`); 
-        
-        // Log to table
-
-        // You might want to add emergency logic for blood pressure too if needed
-        // For example:
-        // if (systolic > 140 || diastolic > 90) { // Example high BP
-        //     bpElem.parentElement.style.backgroundColor = "#ffcccc";
-        //     bpElem.parentElement.style.border = "2px solid red";
-        //     emergencyTriggered = true;
-        // } else {
-        //     bpElem.parentElement.style.backgroundColor = "";
-        //     bpElem.parentElement.style.border = "";
-        // }
-    // } else {
-    //     pressureElem.textContent = "No Pressure Data"; // Message if atmospheric pressure is not available
-    //     console.log('Atmospheric Pressure data: Not available or invalid.'); 
-    // }
-    // --- END OF BLOOD PRESSURE CHANGES ---
-
-
     // Accelerometer Log 
     const accel = data.accel ?? {};
     if (accel.x !== undefined) {
         const accelValue = `x: ${accel.x?.toFixed(2)}, y: ${accel.y?.toFixed(2)}, z: ${accel.z?.toFixed(2)}`;
-        document.getElementById("accel").textContent = accelValue;
+        const accelElem = document.getElementById("accel");
+        if (accelElem) {
+            accelElem.textContent = accelValue;
+        }
         logData('Accelerometer', accelValue);
     }
 
@@ -136,41 +139,64 @@ const updateUI = (data) => {
     const mag = data.mag ?? {};
     if (mag.x !== undefined) {
         const magValue = `x: ${mag.x}, y: ${mag.y}, z: ${mag.z}`;
-        document.getElementById("mag").textContent = magValue;
+        const magElem = document.getElementById("mag");
+        if (magElem) {
+            magElem.textContent = magValue;
+        }
         logData('Magnetometer', magValue);
     }
 
-    // 🚨 Emergency Display
+    // 🚨 Emergency Display and SMS
     if (emergencyTriggered && !emergencyActive) {
+        console.log('🚨 TRIGGERING EMERGENCY ALERT');
         emergencyActive = true;
         
+        // Create emergency elements if they don't exist
         if (!emergencyBanner) {
             console.warn('Emergency banner not found, creating elements...');
             if (typeof createEmergencyElements === 'function') {
                 createEmergencyElements();
+            } else {
+                console.error('createEmergencyElements function not available');
             }
         }
         
-        document.getElementById("emergencyBanner").style.display = "block";
-        document.getElementById("emergencyModal").style.display = "flex";
+        // Show emergency UI
+        const banner = document.getElementById("emergencyBanner");
+        const modal = document.getElementById("emergencyModal");
+        
+        if (banner) banner.style.display = "block";
+        if (modal) modal.style.display = "flex";
         
         if (alertSound && alertSound.paused) {
             alertSound.play().catch(e => console.warn('Could not play alert sound:', e));
         }
 
-        window.sendEmergencyAlert(
-            "EMERGENCY ALERT: Abnormal health readings detected. Medical assistance may be needed.",
-            ['caregiver', 'medical'],
-            emergencyMetrics
-        );
+        // Send emergency SMS
+        console.log('📱 Sending emergency SMS with metrics:', emergencyMetrics);
+        try {
+            window.sendEmergencyAlert(
+                "EMERGENCY ALERT: Abnormal health readings detected. Medical assistance may be needed.",
+                ['caregiver', 'medical'],
+                emergencyMetrics
+            );
+            logData('Emergency SMS', 'Alert sent to caregivers', 'emergency');
+        } catch (error) {
+            console.error('Failed to send emergency alert:', error);
+            logData('Emergency SMS', 'Failed to send alert', 'emergency');
+        }
     }
 
+    // Clear emergency state when readings return to normal
     if (!emergencyTriggered && emergencyActive) {
+        console.log('✅ Emergency cleared - readings normal');
         emergencyActive = false;
-        if (emergencyBanner) emergencyBanner.style.display = "none";
         
-        const emergencyModal = document.getElementById("emergencyModal");
-        if (emergencyModal) emergencyModal.style.display = "none";
+        const banner = document.getElementById("emergencyBanner");
+        const modal = document.getElementById("emergencyModal");
+        
+        if (banner) banner.style.display = "none";
+        if (modal) modal.style.display = "none";
         
         clearTimeout(emergencyTimeout);
         emergencyTimeout = null;
@@ -237,95 +263,3 @@ async function connect() {
 // Make functions available globally
 window.connect = connect;
 window.clearLogs = clearLogs;
-
-
-
-
-
-
-
-
-
-
-
-
-  const alertSound = document.getElementById("alertSound");
-  const emergencyBanner = document.getElementById("emergencyBanner");
-
-  let emergencyTriggered = false;
-
-  // Heart Rate Check
-  const hrElem = document.getElementById("hr");
-  if (typeof data.heartRate === "number" && data.heartRate > 0) {
-    hrElem.textContent = `${data.heartRate} bpm`;
-    if (data.heartRate > 120) {
-      hrElem.parentElement.style.backgroundColor = "#ffcccc";
-      hrElem.parentElement.style.border = "2px solid red";
-      emergencyTriggered = true;
-    } else {
-      hrElem.parentElement.style.backgroundColor = "white";
-      hrElem.parentElement.style.border = "none";
-    }
-  } else {
-    hrElem.textContent = "No data";
-  }
-
-  // Temperature Check
-  const tempElem = document.getElementById("temp");
-  if (typeof data.temp === "number") {
-    tempElem.textContent = `${data.temp.toFixed(1)} °C`;
-    if (data.temp > 38.5) {
-      tempElem.parentElement.style.backgroundColor = "#ffe0b2";
-      tempElem.parentElement.style.border = "2px solid orange";
-      emergencyTriggered = true;
-    } else {
-      tempElem.parentElement.style.backgroundColor = "white";
-      tempElem.parentElement.style.border = "none";
-    }
-  }
-
-  // Pressure
-  const pressureElem = document.getElementById("pressure");
-  if (data.pressure?.pressure) {
-    pressureElem.textContent = `${data.pressure.pressure} Pa`;
-  } else {
-    pressureElem.textContent = "--";
-  }
-
-  // Accelerometer
-  const accel = data.accel ?? {};
-  document.getElementById("accel").textContent = `x: ${accel.x?.toFixed(
-    2
-  )}, y: ${accel.y?.toFixed(2)}, z: ${accel.z?.toFixed(2)}`;
-
-  // Magnetometer
-  const mag = data.mag ?? {};
-  document.getElementById(
-    "mag"
-  ).textContent = `x: ${mag.x}, y: ${mag.y}, z: ${mag.z}`;
-
-  // 🚨 Emergency Display
-  if (emergencyTriggered && !emergencyActive) {
-    emergencyActive = true;
-    emergencyBanner.style.display = "block";
-    if (alertSound && alertSound.paused) {
-      alertSound.play();
-    }
-
-    document.getElementById("emergencyModal").style.display = "block";
-
-    // Auto-call if no user interaction after 10s
-    if (!emergencyTimeout) {
-      emergencyTimeout = setTimeout(callCaregiver, 10000);
-    }
-  }
-
-  // ⚠️ Don't auto-dismiss the emergency alert
-  if (!emergencyTriggered && emergencyActive) {
-    emergencyActive = false;
-    emergencyBanner.style.display = "none";
-    document.getElementById("emergencyModal").style.display = "none";
-    clearTimeout(emergencyTimeout);
-    emergencyTimeout = null;
-    currentCaregiver = 0;
-  }
