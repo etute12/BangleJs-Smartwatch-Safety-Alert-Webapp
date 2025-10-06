@@ -70,7 +70,7 @@ function sendSMS(phoneNumbers, message, callback) {
     console.log('📱 Message:', message);
     
     // Replace with your actual Sendchamp API key
-    const apiKey = 'sendchamp_live_$2a$10$DoRUHJ.jZHGHYt502WlCcuQ91VzB8ClBeUZQ9TujekbQnLdb6GNS.';
+    const apiKey = '';
     
     // Validate inputs
     if (!phoneNumbers || phoneNumbers.length === 0) {
